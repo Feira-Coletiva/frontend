@@ -1,0 +1,59 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.cabecalho{
+    text-align: center;
+    font-size: 1rem;
+    background-color: rgb(22, 214, 64);
+}
+
+.formulario{
+    margin: 3% 10%; 
+    border: 1px solid #818181;
+    box-shadow: 3px 3px 7px #0000007a;
+    border-radius: 5%;
+}
+
+legend{
+    margin: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.label{
+    margin: 20px 10px;
+}
+
+.input{
+    margin: 0 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 90%;
+    border-radius: 5px;
+    border: 1px solid #929292;
+}
+
+.button{
+    display: inline-block;
+    margin: 10px;
+    width: 100px;
+    padding: 5px 2px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(25, 211, 25);
+    font-size: 0.9rem;
+}
+
+/* botao add produto */
+
+#btnAddProduto {
+    width: 50px;
+}
+
+.button a{
+    color: black;
+}

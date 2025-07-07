@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json.schemastore.org/web-manifest",
+  "short_name": "Feira Coletiva",
+  "name": "APP Feira Coletiva",
+  "description": "Template de aplicativo baseado em Bootstrap, SPA e PWA",
+  
+  "icons": [
+    {
+      "src": "IMAGENS/icone192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "IMAGENS/icone512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#4b0082",
+  "theme_color": "#4b0082",
+  "start_url": "HTML/home.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

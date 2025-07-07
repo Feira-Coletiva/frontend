@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "nome": "Luiz",
+    "foto": "../IMAGENS/manoel-gomes.jpg",
+    "contato": "(48) 91111-1111",
+    "lote": {
+      "id": 1,
+      "tempo": "5 dias",
+      "fotoProduto": "../IMAGENS/organic-box.jpg",
+      "descricao": "Boa safra",
+      "postadoHa": "2 horas",
+      "titulo": "Lote de produtos orgânicos variados",
+      "sobre": "Dentro da nossa caixa, você encontra tudo o que precisa para uma alimentação equilibrada e nutritiva: alface crocante, bananas docinhas, ovos frescos, cenouras suculentas, vagem, fubá e muito mais. Cada produto é cultivado sem o uso de agrotóxicos, garantindo um sabor único e cheio de benefícios para a sua saúde.",
+      "qtdProdutos": "2",
+      "produto": [
+        {
+          "id": 1,
+          "nomeAlimento": "Alface crespa",
+          "preco": "7,00",
+          "quantidade": "15"
+        },
+        {
+          "id": 2,
+          "nomeAlimento": "Banana prata",
+          "preco": "5,00",
+          "quantidade": "20"
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "nome": "Bruna",
+    "foto": "../IMAGENS/manoel-gomes.jpg",
+    "contato": "(48) 91111-1111",
+    "lote": {
+      "id": 1,
+      "tempo": "7 dias",
+      "fotoProduto": "../IMAGENS/pote-mel.jpg",
+      "descricao": "Dia do Mel",
+      "postadoHa": "1 dia",
+      "titulo": "Melhor safra de mel",
+      "sobre": "Esta é a melhor safra de mel que já produzimos. O mel é puro, sem adição de açúcares ou conservantes. Além disso, é produzido de forma sustentável, sem prejudicar as abelhas. O mel é um alimento rico em nutrientes e benefícios para a saúde, além de ser um ótimo adoçante natural.",
+      "qtdProdutos": "1",
+      "produto": [
+        {
+          "id": 1,
+          "nomeAlimento": "Mel",
+          "preco": "15,00",
+          "quantidade": "10"
+        }
+      ]
+    }
+
+  },
+  {
+    "id": 3,
+    "nome": "Bruna",
+    "foto": "../IMAGENS/manoel-gomes.jpg",
+    "contato": "(48) 91111-1111",
+    "lote": {
+      "id": 1,
+      "tempo": "7 dias",
+      "fotoProduto": "../IMAGENS/pote-mel.jpg",
+      "descricao": "Dia do Mel",
+      "postadoHa": "1 dia",
+      "titulo": "Melhor safra de mel",
+      "sobre": "Esta é a melhor safra de mel que já produzimos. O mel é puro, sem adição de açúcares ou conservantes. Além disso, é produzido de forma sustentável, sem prejudicar as abelhas. O mel é um alimento rico em nutrientes e benefícios para a saúde, além de ser um ótimo adoçante natural.",
+      "qtdProdutos": "1",
+      "produto": [
+        {
+          "id": 1,
+          "nomeAlimento": "Mel",
+          "preco": "15,00",
+          "quantidade": "10"
+        }
+      ]
+    }
+
+  }
+]

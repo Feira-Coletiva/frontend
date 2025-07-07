@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastre-se na Nossa Comunidade</title>
+    <link rel="stylesheet" href="../CSS/cadastroUser.css">
+</head>
+<body>
+    <header class="cabecalho">
+        <h1>Cadastre-se na Nossa Comunidade</h1>
+    </header>
+    <form action="" class="formulario" id="formCadastro">
+        <legend>Cadastro de Usuários</legend>
+
+        <label for="" class="label">Nome Completo:</label> <br>
+        <input type="text" name="nome" class="input" id="nome" placeholder="Fulaninho"> <br>
+
+        <label for="" class="label">E-mail:</label> <br>
+        <input type="email" name="email" class="input" id="email" placeholder="fulaninho@gmail.com"> <br>
+
+        <label for="" class="label">Telefone:</label> <br>
+        <input type="tel" name="fone" class="input" id="fone" placeholder="48 1234-5678"> <br>
+
+        <label for="" class="label">Senha:</label> <br>
+        <input type="password" name="senha" class="input" id="senha" placeholder="ex: Senha.123"> <br> 
+
+        <label for="" class="label">Confirmar Senha:</label> <br>
+        <input type="password" name="confirmaSenha" class="input" id="confirmaSenha" placeholder="ex: Senha.123"> <br>
+
+        <button type="submit" class="button" id="criarConta" onclick="event">Criar Conta</button>
+        <button class="button" id="cadastroVendedor"><a href="cadastroVendedor.html">Cadastro Vendedor</a></button>
+    </form>
+    <div id="mensagem-erro" style="color: red; margin-top: 0.5rem;"></div>
+    
+    <script src="../JS/cadastro-cliente.js"></script>
+</body>
+</html>

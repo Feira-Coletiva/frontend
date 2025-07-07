@@ -1,0 +1,64 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.cabecalho{
+    text-align: center;
+    font-size: 1rem;
+    background-color: #82f09a;
+}
+
+.formulario{
+    margin: 3% 8%; 
+    border: 1px solid #818181;
+    box-shadow: 3px 3px 7px #0000007a;
+    border-radius: 5%;
+}
+
+legend{
+    margin: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.label{
+    margin: 20px 10px;
+}
+
+.input{
+    margin: 0 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 90%;
+    border-radius: 5px;
+    border: 1px solid #929292;
+}
+
+.formulario > .button{
+    display: inline-block;
+    margin: 10px;
+    width: 100px;
+    padding: 5px 2px;
+    border: none;
+    border-radius: 5px;
+    background-color: #77db8d;
+    box-shadow: 1px 1px 3px #0000007a;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.formulario > .button:hover{
+    cursor: pointer;
+    background-color: #72ce86;
+}
+
+#cadastroVendedor{
+    width: 140px;
+}
+
+.button a{
+    color: black;
+}
