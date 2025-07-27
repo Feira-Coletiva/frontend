@@ -1,20 +1,22 @@
-// Espera o DOM (Document Object Model) ser completamente carregado antes de executar o script
+// Espera o DOM ser completamente carregado
 document.addEventListener('DOMContentLoaded', () => {
 
-    const formCadastro = document.getElementById('formCadastro');
+    const formCadastroVendedor = document.getElementById('formCadastroVendedor');
     const nomeInput = document.getElementById('nome');
+    const rgInput = document.getElementById('rg');
     const emailInput = document.getElementById('email');
     const telefoneInput = document.getElementById('telefone');
+    const cepInput = document.getElementById('cep');
+    const pixInput = document.getElementById('pix');
     const senhaInput = document.getElementById('senha');
     const confirmaSenhaInput = document.getElementById('confirmaSenha');
     const mensagemErro = document.getElementById('mensagem-erro');
-    const criarContaBtn = document.getElementById('criarConta');
+    const criarContaVendedorBtn = document.getElementById('criarContaVendedor');
 
     // URL base da sua API
-    // Se estiver rodando localmente, provavelmente será algo como 'http://localhost:8080'
     const API_BASE_URL = 'http://localhost:8080';
 
-    formCadastro.addEventListener('submit', async (e) => {
+    formCadastroVendedor.addEventListener('submit', async (e) => {
         // Previne o recarregamento da página
         e.preventDefault();
 
@@ -27,26 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!nomeInput.value || !emailInput.value || !telefoneInput.value || !senhaInput.value) {
-            mensagemErro.textContent = 'Por favor, preencha todos os campos.';
-            return;
-        }
-
         // Cria o objeto com os dados para enviar à API
-        const dadosCliente = {
+        const dadosVendedor = {
             nome: nomeInput.value,
+            rg: rgInput.value,
             email: emailInput.value,
             telefone: telefoneInput.value,
+            cep: cepInput.value,
+            chavePix: pixInput.value,
             senha: senhaInput.value
         };
 
         // Bloqueia o botão para evitar múltiplos cliques
-        criarContaBtn.disabled = true;
-        criarContaBtn.textContent = 'Cadastrando...';
+        criarContaVendedorBtn.disabled = true;
+        criarContaVendedorBtn.textContent = 'Cadastrando...';
 
         try {
-            // Faz a requisição POST para o endpoint de clientes
-            const response = await axios.post(`${API_BASE_URL}/api/clientes`, dadosCliente, {
+            // Faz a requisição POST para o endpoint de vendedores
+            const response = await axios.post(`${API_BASE_URL}/api/vendedores`, dadosVendedor, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -54,21 +54,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.status === 201) {
                 // Cadastro realizado com sucesso
-                alert('Cliente cadastrado com sucesso!');
-                formCadastro.reset(); // Limpa o formulário após o sucesso
-                // Redireciona o usuário para a página de login, por exemplo
+                alert('Vendedor cadastrado com sucesso!');
+                formCadastroVendedor.reset(); // Limpa o formulário
+                // Redireciona o usuário para a página de login
                 // window.location.href = 'login.html'; 
             }
         } catch (error) {
-            console.error('Erro ao cadastrar cliente:', error);
-            // Verifica se a API retornou um erro específico
+            console.error('Erro ao cadastrar vendedor:', error);
             if (error.response && error.response.data) {
-                // Exibe a mensagem de erro retornada pela API (ex: email inválido, campos faltando)
-                // A sua API retorna um objeto de erro com o campo 'message' ou similar
+                // Exibe a mensagem de erro retornada pela API
                 if (error.response.data.message) {
                     mensagemErro.textContent = `Erro: ${error.response.data.message}`;
                 } else if (Array.isArray(error.response.data)) {
-                    // Se for uma lista de erros de validação
                     const erros = error.response.data.map(err => err.defaultMessage || err.message).join(' | ');
                     mensagemErro.textContent = `Erro: ${erros}`;
                 } else {
@@ -78,9 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 mensagemErro.textContent = 'Erro de conexão. Verifique se a API está online.';
             }
         } finally {
-            // Reabilita o botão e restaura o texto, independentemente do sucesso ou falha
-            criarContaBtn.disabled = false;
-            criarContaBtn.textContent = 'Criar Conta';
+            // Reabilita o botão e restaura o texto
+            criarContaVendedorBtn.disabled = false;
+            criarContaVendedorBtn.textContent = 'Confirmar';
         }
     });
 

@@ -18,8 +18,8 @@
     <!-- Colocando bordas para se localizar -->
     <link rel="stylesheet" href="CSS/style.css" />
 
-    <!-- Manifest -->
-    <link rel="manifest" href="manifest.json" />
+    <!-- Manifest 
+    <link rel="manifest" href="manifest.json" /> -->
 
     
   </head>
@@ -27,82 +27,72 @@
   <body d-flex flex-column min-vh-100 bg-light text-dark>
     <!-- Definindo div suprema -->
     <div
-      class="container flex-grow-1 d-flex flex-column"
+      class="container flex-grow-1 d-flex flex-column" style="padding-bottom: 5rem;"
     >
       <!-- Cabeçalho -->
       <header id="cabecalho">
-        <!-- Navbar -->
         <div class="navbar navbar-expand-lg">
-          <div class="container-fluid">
-            <!-- Icon -->
-            <a class="navbar-brand" href="#">
-              <img
-                class="img-fluid rounded-circle"
-                src="IMAGENS/logo-3.png"
-                alt="Logo"
-                style="width: 60px; height: 60px"
-              />
-            </a>
-            <!-- Botao menu -->
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Menu -->
-            <div
-              class="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Home -->
-                <li class="nav-item">
-                  <a
-                    class="nav-link active"
-                    aria-current="page"
-                    href="#"
-                    onclick="navega('home')"
-                    >Home</a
-                  >
-                </li>
-                <!-- Login -->
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#"
-                    >Login</a
-                  >
-                </li>
-                <!-- Cadastro -->
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#"
-                    >Cadastrar</a
-                  >
-                </li>
-                <!-- Como Usar -->
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#"
-                    >Como usar</a
-                  >
-                </li>
-                <!-- Sobre -->
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#"
-                    >Sobre</a
-                  >
-                </li>
-              </ul>
+            <div class="container-fluid">
+                <a class="navbar-brand" href="home.html">
+                    <img
+                        class="img-fluid rounded-circle"
+                        src="IMAGENS/logo-3.png"
+                        alt="Logo"
+                        style="width: 60px; height: 60px"
+                    />
+                </a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div
+                    class="collapse navbar-collapse"
+                    id="navbarSupportedContent"
+                >
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link active"
+                                aria-current="page"
+                                href="home.html"
+                                >Home</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="login.html"
+                                >Login</a
+                            >
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Perfil
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="HTML/pagina-vendedor.html">Vendedor</a></li>
+                                <li><a class="dropdown-item" href="HTML/pagina-cliente.html">Cliente</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Como usar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Sobre</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
         </div>
       </header>
 
       <!-- Navegação -->
-      <main id="home" class="tela show">
+      <main id="home" class="tela show">  
         <div class="d-flex flex-column">
           <!-- Intro -->
           <div class="my-3">
@@ -145,7 +135,6 @@
           </div>
           <!-- Cards -->
           <div
-            
             class="d-flex flex-column"
             style="font-size: small"
           >
@@ -162,23 +151,6 @@
         </div>
         <div id="conteudo"></div>
       </main>
-
-      <!-- Rodapé -->
-      <footer>  
-        
-        <nav class="bottom-nav">
-            <button onclick="carregarPagina('#')">
-                <i class="fa-solid fa-house"></i><br>Home
-            </button>
-            <button onclick="carregarPagina('ofertas')">
-                <i class="bi-tag"></i><br>Ofertas
-            </button>
-            <button onclick="carregarPagina('perfil')">
-                <i class="fa-solid fa-circle-user"></i><br>Perfil
-            </button>
-        </nav> 
-        
-      </footer>
     </div>
 
     <!-- Bootstrap script -->
@@ -201,7 +173,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Arquivo JS -->
-    <script src="../JS/main.js"></script>
-    <script src="../JS/navegacaoSPA.js"></script>
+    <script src="JS/main.js"></script>
+    <script src="JS/navegacaoSPA.js"></script>
   </body>
 </html>

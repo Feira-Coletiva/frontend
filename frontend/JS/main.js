@@ -171,11 +171,12 @@ function calcularTotal(produtos) {
 // Chama a função ao carregar a página
 window.onload = carregarDados;
 
-//Registra o serviceWorker da aplicação para cache de recursos offline
+/*    DESATIVADO
+
+Registra o serviceWorker da aplicação para cache de recursos offline
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');
 }
-
 
 var pedidoInstalacao;
 window.addEventListener('beforeinstallprompt', function (installPrompt) {
@@ -189,3 +190,4 @@ window.addEventListener('beforeinstallprompt', function (installPrompt) {
 function installApp() {
   pedidoInstalacao.prompt();
 }
+ */
