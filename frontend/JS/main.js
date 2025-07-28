@@ -1,4 +1,5 @@
-// Metodo para navegação das paginas
+// Método para navegação entre as telas da home
+// Assumimos que esta função está definida em navegacaoSPA.js ou foi movida para cá.
 function navega(destino) {
   let telas = document.getElementsByClassName('tela');
   Array.from(telas).forEach((element) => {
@@ -9,56 +10,59 @@ function navega(destino) {
   document.getElementById(destino).classList.add('show');
 }
 
-// Carregando todas as publis
+// URLs da API
+const API_PUBLICACAO_TODOS_URL = 'http://localhost:8080/api/publicacoes';
+const API_PUBLICACAO_ID_URL = 'http://localhost:8080/api/publicacoes';
+
+// Armazena as quantidades selecionadas de cada produto para o cálculo total
+let quantidadesSelecionadas = {};
+
+// --- Funções de Navegação e Carregamento de Dados ---
+
+// Carregando todas as publicações da API
 async function carregarDados() {
   try {
-    // Fazendo a requisição para carregar o arquivo JSON
-    const resposta = await axios.get('./JS/dados.json'); // Caminho para o arquivo JSON
-    const dadosPublicacoes = resposta.data;
+    const resposta = await axios.get(API_PUBLICACAO_TODOS_URL);
+    const publicacoes = resposta.data;
 
-    // Referência para o elemento da lista
     const cardsPublicaoes = document.getElementById('publicacoes');
-
-    // Limpando a div antes de adicionar os novos itens
     cardsPublicaoes.innerHTML = '';
 
-    // Exibindo os cards na tela
-    dadosPublicacoes.forEach((publi) => {
-      // Todas as publicações
+    if (publicacoes.length === 0) {
+      cardsPublicaoes.innerHTML = '<p class="text-center text-muted">Nenhuma publicação encontrada no momento.</p>';
+      return;
+    }
+
+    publicacoes.forEach((publi) => {
       const card = document.createElement('div');
       card.classList.add('col-12', 'col-md-6', 'col-lg-4');
       card.innerHTML = `
-        <!-- Card1 -->
+        <!-- Card de Publicação -->
         <div class="card">
-          <!-- Superior -->
-          <div class="d-flex flex-row justify-content-between ">
-            <div class="p-2">
-              <img src="${publi.foto}" alt="Perfil" style="width: 24px; border-radius: 50%;" />
-              <span class="username" style="font-size: small;">${publi.nome}</span>
+          <!-- Superior: Vendedor -->
+          <div class="d-flex flex-row justify-content-between p-2">
+            <div class="d-flex align-items-center">
+              <img src="IMAGENS/manoel-gomes.jpg" alt="Perfil do Vendedor" style="width: 24px; border-radius: 50%;" />
+              <span class="username ms-2" style="font-size: small;">${publi.oferta.vendedor.nome}</span>
             </div>
-            <div class="p-2">
-              <p>Tempo de Exposição: ${publi.lote.tempo}</p>
+            <div class="d-flex align-items-center">
+              <p class="mb-0" style="font-size: small;">Expira em: ${new Date(publi.dtFinalExposicao).toLocaleDateString()}</p>
             </div>
           </div>
-          <!-- Meio -->
+          <!-- Meio: Imagem e Título -->
           <div class="">
-            <img src="${publi.lote.fotoProduto}" alt="" style="width: 100%; height: 150px;" />
+            <img src="IMAGENS/verduras.jpg" alt="Imagem do produto" style="width: 100%; height: 150px; object-fit: cover;" />
           </div>
-          <!-- Inferior -->
+          <!-- Inferior: Descrição e Botão -->
           <div class="d-flex flex-column mt-1">
-            <div class="d-flex flex-row justify-content-around px-2 ">
-              <div class=""><i class="fa-solid fa-thumbs-up"></i></div>
-              <div class="">
-                <button type="button" onclick="carregarPubli(${publi.id})">
-                  Participar
-                </button>
-              </div>
-              <div class=""><i class="fa-solid fa-share"></i></div>
-            </div>
             <div class="px-3">
-              <p>${publi.lote.descricao} </br>
-                 ${publi.lote.postadoHa}
-              </p>
+              <h5>${publi.oferta.titulo}</h5>
+              <p>${publi.oferta.descricao}</p>
+            </div>
+            <div class="d-flex flex-row justify-content-center px-2 py-2">
+              <button class="btn btn-primary w-100" onclick="carregarPubli(${publi.id})">
+                Visualizar
+              </button>
             </div>
           </div>
         </div>
@@ -66,128 +70,141 @@ async function carregarDados() {
       cardsPublicaoes.appendChild(card);
     });
   } catch (erro) {
-    console.error('Erro ao carregar os dados:', erro);
+    console.error('Erro ao carregar as publicações:', erro);
+    const cardsPublicaoes = document.getElementById('publicacoes');
+    cardsPublicaoes.innerHTML = '<p class="text-center text-danger">Não foi possível carregar as publicações no momento. Tente novamente mais tarde.</p>';
   }
 }
 
-// Carregando a publi
-async function carregarPubli(dados) {
+// Função para calcular o total da compra
+function calcularTotalCompra(publicacao) {
+    let total = 0;
+    publicacao.oferta.produtos.forEach(produto => {
+        const quantidade = quantidadesSelecionadas[produto.id] || 0;
+        total += quantidade * produto.preco;
+    });
+    return total.toFixed(2);
+}
+
+// Carregando a publicação selecionada e seus produtos
+async function carregarPubli(publicacaoId) {
   try {
     navega('publicacao');
 
-    const resposta = await axios.get('JS/dados.json');
+    const resposta = await axios.get(`${API_PUBLICACAO_ID_URL}/${publicacaoId}`);
+    const publi = resposta.data;
 
-    const dadosPublicacoes = resposta.data;
+    // Reinicia as quantidades selecionadas para esta nova publicação
+    quantidadesSelecionadas = {}; 
 
     const publiSelecionada = document.getElementById('publiSelecionada');
-
     publiSelecionada.innerHTML = '';
 
-    dadosPublicacoes.forEach((publi) => {
-      if (publi.id === dados) {
-        // Exibindo a publicação selecionada
-        const publiSele = document.createElement('div');
-        publiSele.classList.add(
-          'd-flex',
-          'flex-column',
-          'justify-content-center'
-        );
-        publiSele.innerHTML = ` 
-          <!-- Superior -->
-          <div class="my-3 ">
-            <!-- Imagem -->
-            <div class="">
-              <!-- Carousel - Fotos -->
-              <img src="${
-                publi.lote.fotoProduto
-              }" alt="" style="width: 100%; height: 250px;" > 
-            </div>
-          </div>
-          <hr>
-          <!-- Meio -->
-          <div class="mb-2">
-            <!-- Descrição do pedido -->
-            <div class="">
-              <h2>${publi.lote.titulo}</h2>
-              <p>
-                ${publi.lote.sobre}
-              </p>
-            </div>
-          </div>
-          <hr>
-          <!-- Inferior -->
-          <div class="">
-            <div class="">
-              <!-- Seleção de itens -->
-              <div id="produtos" class="mb-2">
-                <!-- Iterando sobre os produtos -->
-                ${publi.lote.produto
-                  .map(
-                    (produto) => `
-                <div class="d-flex flex-row">
-                  <div class="">
-                    <p>${produto.nomeAlimento} (un) <span style="font-weight: bold;">R$ ${produto.preco} | ${produto.quantidade} disponíveis</span></p>
-                  </div>
-                  <div class="d-flex align-items-center">
-                    <div class="d-flex flex-row">
-                      <button><i class="fa-solid fa-minus"></i></button>
-                      <span>1</span>
-                      <button><i class="fa-solid fa-plus"></i></button>
+    // Gerar o HTML para a lista de produtos com seletores de quantidade
+    let produtosHtml = '';
+    if (publi.oferta.produtos && publi.oferta.produtos.length > 0) {
+        produtosHtml = publi.oferta.produtos.map(produto => {
+            // Inicializa a quantidade para cada produto
+            quantidadesSelecionadas[produto.id] = 0; 
+            return `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">${produto.nome} (${produto.unidadeMedida})</h6>
+                        <small>R$ ${produto.preco.toFixed(2)} | Estoque: ${produto.qtdEstoque}</small>
                     </div>
-                  </div> 
-                </div>`
-                  )
-                  .join('')}   
-              </div>            
-              <!-- Botão de Adicionar ao Carrinho -->
-              <div class="d-flex justify-content-end">
-                <button><i class="fa-solid fa-cart-shopping"></i> R$ ${calcularTotal(
-                  publi.lote.produto
-                )}</button>
-              </div>
-            </div>
-          </div>
-        `;
-        publiSelecionada.appendChild(publiSele);
-        carregarProdutos(publi.id);
-      } else {
-        console.log('Publicação não encontrada');
-      }
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-outline-secondary me-2 btn-diminuir" data-produto-id="${produto.id}">-</button>
+                        <span class="quantidade-produto" id="qtd-produto-${produto.id}">0</span>
+                        <button class="btn btn-sm btn-outline-secondary ms-2 btn-aumentar" data-produto-id="${produto.id}" data-estoque="${produto.qtdEstoque}">+</button>
+                    </div>
+                </li>
+            `;
+        }).join('');
+    } else {
+        produtosHtml = '<li class="list-group-item">Nenhum produto disponível para esta oferta.</li>';
+    }
+
+    const publiSele = document.createElement('div');
+    publiSele.classList.add('d-flex', 'flex-column', 'justify-content-center');
+    publiSele.innerHTML = ` 
+      <!-- Detalhes da Publicação -->
+      <div class="my-3">
+        <img src="IMAGENS/verduras.jpg" alt="Imagem do produto" style="width: 100%; height: 250px; object-fit: cover;">
+      </div>
+      <hr>
+      <div class="mb-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">${publi.oferta.titulo}</h2>
+          <button class="btn btn-primary" onclick="navega('home')">Voltar</button>
+        </div>
+        <p class="mt-2">${publi.oferta.descricao}</p>
+        <p><strong>Vendedor:</strong> ${publi.oferta.vendedor.nome}</p>
+      </div>
+      <hr>
+      <!-- Lista de Produtos -->
+      <div class="mb-2">
+        <h5>Produtos Disponíveis</h5>
+        <ul class="list-group">
+            ${produtosHtml}
+        </ul>
+      </div>
+      <hr>
+      <!-- Local de Retirada -->
+      <div class="mb-2">
+        <h5>Local de Retirada</h5>
+        <p><strong>Nome do Local:</strong> ${publi.localDeRetirada.nome}</p>
+        <p><strong>CEP:</strong> ${publi.localDeRetirada.cep}</p>
+      </div>
+      <hr>
+      <!-- Datas de Finalização -->
+      <div class="mb-2">
+        <h5>Prazos</h5>
+        <p><strong>Data Final de Exposição:</strong> ${new Date(publi.dtFinalExposicao).toLocaleDateString()}</p>
+        <p><strong>Data Final de Pagamento:</strong> ${new Date(publi.dtFinalPagamento).toLocaleDateString()}</p>
+      </div>
+      <div class="d-grid gap-2 mt-4">
+        <button class="btn btn-success" id="btn-participar-compra">Participar da Compra (Total: R$ <span id="total-compra">0.00</span>)</button>
+      </div>
+    `;
+    publiSelecionada.appendChild(publiSele);
+
+    // Adiciona event listeners para os botões de quantidade
+    document.querySelectorAll('.btn-aumentar').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const produtoId = parseInt(event.target.dataset.produtoId);
+            const estoque = parseInt(event.target.dataset.estoque);
+            if (quantidadesSelecionadas[produtoId] < estoque) {
+                quantidadesSelecionadas[produtoId]++;
+                document.getElementById(`qtd-produto-${produtoId}`).textContent = quantidadesSelecionadas[produtoId];
+                document.getElementById('total-compra').textContent = calcularTotalCompra(publi);
+            }
+        });
     });
+
+    document.querySelectorAll('.btn-diminuir').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const produtoId = parseInt(event.target.dataset.produtoId);
+            if (quantidadesSelecionadas[produtoId] > 0) {
+                quantidadesSelecionadas[produtoId]--;
+                document.getElementById(`qtd-produto-${produtoId}`).textContent = quantidadesSelecionadas[produtoId];
+                document.getElementById('total-compra').textContent = calcularTotalCompra(publi);
+            }
+        });
+    });
+
+    // Event listener para o botão "Participar da Compra"
+    document.getElementById('btn-participar-compra').addEventListener('click', () => {
+        // Lógica para enviar o pedido de compra com as quantidades selecionadas
+        console.log('Quantidades selecionadas:', quantidadesSelecionadas);
+        alert('Funcionalidade de participar da compra ainda não implementada.');
+    });
+
   } catch (erro) {
     console.error('Erro ao carregar a publicação:', erro);
+    const publiSelecionada = document.getElementById('publiSelecionada');
+    publiSelecionada.innerHTML = '<p class="text-center text-danger">Publicação não encontrada ou erro ao carregar.</p>';
   }
-}
-
-// Função para calcular o valor total com base nos produtos
-function calcularTotal(produtos) {
-  let total = 0;
-  produtos.forEach((produto) => {
-    total += parseFloat(produto.preco) * 1; // Se estiver escolhendo 1 unidade de cada produto
-  });
-  return total.toFixed(2);
 }
 
 // Chama a função ao carregar a página
 window.onload = carregarDados;
-
-/*    DESATIVADO
-
-Registra o serviceWorker da aplicação para cache de recursos offline
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js');
-}
-
-var pedidoInstalacao;
-window.addEventListener('beforeinstallprompt', function (installPrompt) {
-  if (installPrompt) {
-    $('#installAppBt').show();
-    pedidoInstalacao = installPrompt;
-  }
-});
-
-// Inicia a instalação do app
-function installApp() {
-  pedidoInstalacao.prompt();
-}
- */

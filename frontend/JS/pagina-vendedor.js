@@ -1,235 +1,324 @@
-// ID do vendedor para simular a sessão.
-const VENDEDOR_ID_PADRAO = 1;
+document.addEventListener('DOMContentLoaded', () => {
+    // ID do Vendedor Logado (simulação)
+    const VENDEDOR_ID = 2;
 
-// URLs da sua API
-const API_VENDEDORES_URL = `http://localhost:8080/api/vendedores/${VENDEDOR_ID_PADRAO}`;
-const API_OFERTAS_VENDEDOR_URL = `http://localhost:8080/api/vendedores/ofertas/${VENDEDOR_ID_PADRAO}`;
-const API_OFERTAS_DETALHES_URL = `http://localhost:8080/api/ofertas/produtos/`;
+    // Endpoints da API
+    const API_VENDEDOR_URL = `http://localhost:8080/api/vendedores/${VENDEDOR_ID}`;
+    const API_OFERTAS_VENDEDOR_URL = `http://localhost:8080/api/vendedores/ofertas/${VENDEDOR_ID}`;
+    const API_OFERTA_POR_ID_URL = 'http://localhost:8080/api/ofertas'; // Endpoint para buscar oferta por ID
+    const API_PUBLICACOES_VENDEDOR_URL = `http://localhost:8080/api/publicacoes/vendedor/${VENDEDOR_ID}`;
+    const API_PUBLICACAO_POR_ID_URL = 'http://localhost:8080/api/publicacoes';
 
-// Elementos HTML
-const conteudoSpa = document.getElementById('conteudo-spa');
-const nomeUsuarioHeader = document.querySelector('#perfil-info h2');
-const telefoneUsuarioHeader = document.querySelector('#perfil-info p');
-const btnInfoVendedor = document.getElementById('btn-info-vendedor');
-const btnOfertas = document.getElementById('btn-ofertas');
-const btnPublicacoes = document.getElementById('btn-publicacoes');
+    // Elementos da página
+    const conteudoSpa = document.getElementById('conteudo-spa');
+    const nomeVendedorElement = document.querySelector('#perfil-info h2');
+    const telefoneVendedorElement = document.querySelector('#perfil-info p');
+    const btnInfoVendedor = document.getElementById('btn-info-vendedor');
+    const btnOfertas = document.getElementById('btn-ofertas');
+    const btnPublicacoes = document.getElementById('btn-publicacoes');
 
-// --- Funções para carregar o conteúdo SPA ---
+    // --- Funções de Carregamento de Conteúdo (SPA) ---
 
-// Preenche o cabeçalho e carrega o formulário de informações
-async function carregarInfoVendedor() {
-    try {
-        const response = await fetch(API_VENDEDORES_URL);
-        if (!response.ok) {
-            throw new Error('Vendedor não encontrado na API.');
+    // Carrega e injeta as informações de perfil do vendedor em um formulário
+    async function carregarInfoVendedor() {
+        try {
+            const response = await fetch(API_VENDEDOR_URL);
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar as informações do vendedor.');
+            }
+            const vendedor = await response.json();
+            
+            nomeVendedorElement.textContent = vendedor.nome;
+            telefoneVendedorElement.textContent = vendedor.telefone;
+            
+            const infoHtml = `
+                <h3 class="mb-3">Informações Pessoais</h3>
+                <form id="form-info-vendedor">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="nome" value="${vendedor.nome}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" value="${vendedor.email}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="telefone" value="${vendedor.telefone}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="chavePix" class="form-label">Chave Pix</label>
+                        <input type="text" class="form-control" id="chavePix" value="${vendedor.chavePix}" required>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary" id="btn-editar-info-vendedor">Editar</button>
+                    </div>
+                </form>
+            `;
+            conteudoSpa.innerHTML = infoHtml;
+
+            document.getElementById('btn-editar-info-vendedor').addEventListener('click', () => {
+                alert('Funcionalidade de edição ainda não implementada.');
+            });
+
+        } catch (error) {
+            console.error('Erro ao carregar informações do vendedor:', error);
+            conteudoSpa.innerHTML = `<p class="text-danger text-center">Erro ao carregar informações.</p>`;
         }
-        const vendedor = await response.json();
-        
-        // Atualiza o cabeçalho com os dados do vendedor
-        nomeUsuarioHeader.textContent = vendedor.nome;
-        telefoneUsuarioHeader.textContent = vendedor.telefone;
-
-        const formularioHtml = `
-            <h3 class="mb-3">Minhas Informações</h3>
-            <form id="form-info-vendedor">
-                <div class="mb-3">
-                    <label for="nome" class="form-label">Nome Completo</label>
-                    <input type="text" class="form-control" id="nome" value="${vendedor.nome}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mail</label>
-                    <input type="email" class="form-control" id="email" value="${vendedor.email}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="telefone" class="form-label">Telefone</label>
-                    <input type="tel" class="form-control" id="telefone" value="${vendedor.telefone}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="chavePix" class="form-label">Chave PIX</label>
-                    <input type="text" class="form-control" id="chavePix" value="${vendedor.chavePix}" required>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-primary" id="btn-editar-info">Editar</button>
-                </div>
-            </form>
-        `;
-        conteudoSpa.innerHTML = formularioHtml;
-
-        document.getElementById('btn-editar-info').addEventListener('click', () => {
-            alert('Funcionalidade de edição ainda não implementada.');
-        });
-    } catch (error) {
-        console.error('Erro ao carregar dados do vendedor:', error);
-        conteudoSpa.innerHTML = `<p class="text-danger text-center">Não foi possível carregar os dados do vendedor. ${error.message}</p>`;
     }
-}
 
-// Gera e injeta a tela de ofertas
-async function carregarOfertasVendedor() {
-    let ofertasHtml = `
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Minhas Ofertas</h3>
-            <button class="btn btn-success" id="btn-nova-oferta">Nova Oferta</button>
-        </div>
-        <div id="ofertas-container" class="row row-cols-1 row-cols-md-2 g-4">
-    `;
+    // Carrega e injeta a tela de ofertas
+    async function carregarOfertasVendedor() {
+        let ofertasHtml = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Minhas Ofertas</h3>
+                <button class="btn btn-success" id="btn-nova-oferta">Nova Oferta</button>
+            </div>
+            <div id="ofertas-container" class="row row-cols-1 row-cols-md-2 g-4">
+        `;
 
-    try {
-        const response = await fetch(API_OFERTAS_VENDEDOR_URL);
-        if (!response.ok) {
-            throw new Error('Não foi possível carregar as ofertas.');
-        }
-        const vendedorComOfertas = await response.json();
-        const ofertas = vendedorComOfertas.ofertas;
+        try {
+            const response = await fetch(API_OFERTAS_VENDEDOR_URL);
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar as ofertas.');
+            }
+            const vendedorComOfertas = await response.json();
+            const ofertas = vendedorComOfertas.ofertas;
 
-        if (ofertas && ofertas.length > 0) {
-            ofertas.forEach(oferta => {
-                const statusTexto = oferta.dispoStatus ? 'Ativa' : 'Inativa';
-                const statusCor = oferta.dispoStatus ? 'text-success' : 'text-danger';
-                
-                ofertasHtml += `
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card">
-                            <img src="../IMAGENS/verduras.jpg" class="card-img-top" alt="Imagem da oferta" style="height: 150px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">${oferta.titulo}</h5>
-                                <p class="card-text mb-2"><strong class="${statusCor}">${statusTexto}</strong></p>
-                                <button type="button" class="btn btn-primary w-100 visualizar-oferta" data-id="${oferta.id}">Visualizar</button>
+            if (ofertas && ofertas.length > 0) {
+                ofertas.forEach(oferta => {
+                    const statusTexto = oferta.dispoStatus ? 'Ativa' : 'Inativa';
+                    const statusCor = oferta.dispoStatus ? 'text-success' : 'text-danger';
+                    
+                    ofertasHtml += `
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card">
+                                <img src="../IMAGENS/verduras.jpg" class="card-img-top" alt="Imagem da oferta" style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">${oferta.titulo}</h5>
+                                    <p class="card-text mb-2"><strong class="${statusCor}">${statusTexto}</strong></p>
+                                    <button type="button" class="btn btn-primary w-100 visualizar-oferta" data-id="${oferta.id}">Visualizar</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
-        } else {
-            ofertasHtml += `<p class="text-center text-muted mt-4">Nenhuma oferta encontrada.</p>`;
+                    `;
+                });
+            } else {
+                ofertasHtml += `<p class="text-center text-muted mt-4">Nenhuma oferta encontrada.</p>`;
+            }
+        } catch (error) {
+            console.error('Erro ao carregar ofertas:', error);
+            ofertasHtml += `<p class="text-danger text-center mt-4">Erro ao carregar ofertas: ${error.message}</p>`;
         }
-    } catch (error) {
-        console.error('Erro ao carregar ofertas:', error);
-        ofertasHtml += `<p class="text-danger text-center mt-4">Erro ao carregar ofertas: ${error.message}</p>`;
-    }
-    
-    ofertasHtml += `</div>`;
-    conteudoSpa.innerHTML = ofertasHtml;
+        
+        ofertasHtml += `</div>`;
+        conteudoSpa.innerHTML = ofertasHtml;
 
-    document.getElementById('btn-nova-oferta')?.addEventListener('click', () => {
-        window.location.href = '../HTML/cadastro-oferta.html';
-    });
-
-    document.querySelectorAll('.visualizar-oferta').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const ofertaId = event.target.dataset.id;
-            visualizarDetalhesOferta(ofertaId);
+        document.getElementById('btn-nova-oferta')?.addEventListener('click', () => {
+            window.location.href = '../HTML/cadastro-oferta.html';
         });
-    });
-}
 
-// Gera a tela de detalhes de uma oferta específica
-async function visualizarDetalhesOferta(ofertaId) {
-    let detalhesHtml = `
-        <button class="btn btn-secondary mb-3" id="btn-voltar-ofertas">
-            <i class="fa-solid fa-arrow-left"></i> Voltar
-        </button>
-    `;
+        document.querySelectorAll('.visualizar-oferta').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const ofertaId = event.target.dataset.id;
+                visualizarDetalhesOferta(ofertaId);
+            });
+        });
+    }
 
-    try {
-        const response = await fetch(`${API_OFERTAS_DETALHES_URL}${ofertaId}`);
-        if (!response.ok) {
-            throw new Error('Detalhes da oferta não encontrados.');
-        }
-        const oferta = await response.json();
-
-        // Constrói a lista de produtos
-        const produtosHtml = oferta.produtos.map(p => `
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong class="me-2">${p.nome}</strong>
-                    <span class="text-muted">(${p.medida} ${p.unidadeMedida})</span>
-                </div>
-                <div>
-                    <span class="badge bg-secondary me-2">Qtd: ${p.qtdEstoque}</span>
-                    <span class="badge bg-success">R$ ${p.preco.toFixed(2)}</span>
-                </div>
-            </li>
-        `).join('');
-
-        detalhesHtml += `
-            <div class="card mb-3">
-                <img src="../IMAGENS/verduras.jpg" class="card-img-top" alt="Imagem da oferta" style="height: 250px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">${oferta.titulo}</h5>
-                    <p class="card-text">${oferta.descricao}</p>
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item d-flex justify-content-between">
-                            <strong>Estoque Total:</strong>
-                            <span>${oferta.qtdEstoqueTotal} itens</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <strong>Disponibilidade:</strong>
-                            <span class="${oferta.statusDisponibilidade ? 'text-success' : 'text-danger'}">
-                                ${oferta.statusDisponibilidade ? 'Ativa' : 'Inativa'}
-                            </span>
-                        </li>
-                    </ul>
-                    <h6 class="mt-3">Produtos na oferta:</h6>
-                    <ul class="list-group">
-                        ${produtosHtml}
-                    </ul>
-                </div>
+    // Carrega e injeta a tela de publicações
+    async function carregarPublicacoesVendedor() {
+        let publicacoesHtml = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Minhas Publicações</h3>
+                <button class="btn btn-success" id="btn-nova-publicacao">Nova Publicação</button>
             </div>
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-warning me-2">Editar</button>
-                <button class="btn btn-danger">Excluir</button>
-            </div>
+            <div id="publicacoes-container" class="row row-cols-1 row-cols-md-2 g-4">
         `;
-    } catch (error) {
-        console.error('Erro ao carregar detalhes da oferta:', error);
-        detalhesHtml += `<p class="text-danger text-center">Erro ao carregar os detalhes da oferta: ${error.message}</p>`;
+
+        try {
+            const response = await fetch(API_PUBLICACOES_VENDEDOR_URL);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    publicacoesHtml += `<p class="text-center text-muted mt-4">Nenhuma publicação encontrada.</p>`;
+                } else {
+                    throw new Error('Não foi possível carregar as publicações.');
+                }
+            } else {
+                const publicacoes = await response.json();
+
+                if (publicacoes && publicacoes.length > 0) {
+                    publicacoes.forEach(publicacao => {
+                        publicacoesHtml += `
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${publicacao.oferta.titulo}</h5>
+                                        <p class="card-text mb-2"><strong>Etapa:</strong> ${publicacao.etapa}</p>
+                                        <p class="card-text mb-2"><strong>Local de Retirada:</strong> ${publicacao.localDeRetirada.nome}</p>
+                                        <p class="card-text mb-2"><strong>Expira em:</strong> ${publicacao.dtFinalExposicao}</p>
+                                        <button type="button" class="btn btn-primary w-100 visualizar-publicacao" data-id="${publicacao.id}">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    publicacoesHtml += `<p class="text-center text-muted mt-4">Nenhuma publicação encontrada.</p>`;
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao carregar publicações:', error);
+            publicacoesHtml += `<p class="text-danger text-center mt-4">Erro ao carregar publicações: ${error.message}</p>`;
+        }
+        
+        publicacoesHtml += `</div>`;
+        conteudoSpa.innerHTML = publicacoesHtml;
+
+        document.getElementById('btn-nova-publicacao')?.addEventListener('click', () => {
+            window.location.href = '../HTML/cadastro-publicacao.html';
+        });
+
+        document.querySelectorAll('.visualizar-publicacao').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const publicacaoId = event.target.dataset.id;
+                visualizarDetalhesPublicacao(publicacaoId);
+            });
+        });
+    }
+
+    // --- Funções de Detalhes de Oferta e Publicação ---
+
+    // Exibe os detalhes de uma oferta específica, incluindo seus produtos
+    async function visualizarDetalhesOferta(ofertaId) {
+        try {
+            const response = await fetch(`${API_OFERTA_POR_ID_URL}/${ofertaId}`);
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar os detalhes da oferta.');
+            }
+            const oferta = await response.json();
+            
+            // Gerar o HTML para a lista de produtos da oferta
+            let produtosOfertaHtml = '';
+            if (oferta.produtos && oferta.produtos.length > 0) {
+                produtosOfertaHtml = oferta.produtos.map(produto => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">${produto.nome} (${produto.unidadeMedida})</h6>
+                            <small>Preço: R$ ${produto.preco.toFixed(2)} | Estoque: ${produto.qtdEstoque}</small>
+                        </div>
+                    </li>
+                `).join('');
+            } else {
+                produtosOfertaHtml = '<li class="list-group-item">Nenhum produto cadastrado para esta oferta.</li>';
+            }
+
+            const detalhesHtml = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0">Detalhes da Oferta</h3>
+                    <button class="btn btn-secondary" id="btn-voltar-ofertas">Voltar</button>
+                </div>
+                <div class="card p-4">
+                    <img src="../IMAGENS/verduras.jpg" class="card-img-top mb-3" alt="Imagem da oferta" style="height: 200px; object-fit: cover;">
+                    <h5>${oferta.titulo}</h5>
+                    <p><strong>Descrição:</strong> ${oferta.descricao}</p>
+                    <hr>
+                    <p><strong>Estoque Total:</strong> ${oferta.qtdEstoqueTotal}</p>
+                    <p><strong>Status:</strong> <span class="${oferta.statusDisponibilidade ? 'text-success' : 'text-danger'}">${oferta.statusDisponibilidade ? 'Ativa' : 'Inativa'}</span></p>
+                    <hr>
+                    <h5>Produtos da Oferta</h5>
+                    <ul class="list-group mb-3">
+                        ${produtosOfertaHtml}
+                    </ul>
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary">Gerenciar Publicações</button>
+                    <button class="btn btn-warning">Editar Oferta</button>
+                </div>
+            `;
+            
+            conteudoSpa.innerHTML = detalhesHtml;
+
+            document.getElementById('btn-voltar-ofertas')?.addEventListener('click', () => {
+                carregarOfertasVendedor();
+            });
+
+        } catch (error) {
+            console.error('Erro ao carregar detalhes da oferta:', error);
+            conteudoSpa.innerHTML = `<p class="text-danger text-center">Erro ao carregar detalhes da oferta.</p>`;
+        }
     }
     
-    conteudoSpa.innerHTML = detalhesHtml;
+    // Exibe os detalhes de uma publicação específica
+    async function visualizarDetalhesPublicacao(publicacaoId) {
+        try {
+            const response = await fetch(`${API_PUBLICACAO_POR_ID_URL}/${publicacaoId}`);
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar os detalhes da publicação.');
+            }
+            const publicacao = await response.json();
 
-    // Adiciona o evento para o botão "Voltar"
-    document.getElementById('btn-voltar-ofertas').addEventListener('click', carregarOfertasVendedor);
-}
+            const detalhesHtml = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0">Detalhes da Publicação</h3>
+                    <button class="btn btn-secondary" id="btn-voltar-publicacoes">Voltar</button>
+                </div>
+                <div class="card p-4">
+                    <h5>Oferta: ${publicacao.oferta.titulo}</h5>
+                    <p><strong>Descrição:</strong> ${publicacao.oferta.descricao}</p>
+                    <hr>
+                    <p><strong>Etapa Atual:</strong> ${publicacao.etapa}</p>
+                    <p><strong>Local de Retirada:</strong> ${publicacao.localDeRetirada.nome} (${publicacao.localDeRetirada.cep})</p>
+                    <p><strong>Data Final de Exposição:</strong> ${publicacao.dtFinalExposicao}</p>
+                    <p><strong>Data Final de Pagamento:</strong> ${publicacao.dtFinalPagamento}</p>
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary">Gerenciar Pedidos</button>
+                    <button class="btn btn-warning">Editar Publicação</button>
+                </div>
+            `;
+            
+            conteudoSpa.innerHTML = detalhesHtml;
 
-// Gera e injeta a tela de publicações (placeholder)
-function carregarPublicacoesVendedor() {
-    const publicacoesHtml = `
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Minhas Publicações</h3>
-            <button class="btn btn-success" id="btn-nova-publicacao">Nova Publicação</button>
-        </div>
-        <p class="text-center text-muted mt-4">Nenhuma publicação encontrada.</p>
-    `;
-    conteudoSpa.innerHTML = publicacoesHtml;
+            document.getElementById('btn-voltar-publicacoes')?.addEventListener('click', () => {
+                carregarPublicacoesVendedor();
+            });
 
-    document.getElementById('btn-nova-publicacao')?.addEventListener('click', () => {
-        alert('Redirecionando para a tela de cadastro de publicação...');
-    });
-}
+        } catch (error) {
+            console.error('Erro ao carregar detalhes da publicação:', error);
+            conteudoSpa.innerHTML = `<p class="text-danger text-center">Erro ao carregar detalhes da publicação.</p>`;
+        }
+    }
 
-// --- Event listeners para os botões do perfil ---
-document.addEventListener('DOMContentLoaded', () => {
-    carregarInfoVendedor();
+
+    // --- Lógica de Navegação SPA ---
+
+    function setActiveButton(buttonId) {
+        document.querySelectorAll('.gerencia-usuario .btn').forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary');
+        });
+        const activeButton = document.getElementById(buttonId);
+        activeButton.classList.remove('btn-outline-primary');
+        activeButton.classList.add('btn-primary');
+    }
 
     btnInfoVendedor.addEventListener('click', () => {
+        setActiveButton('btn-info-vendedor');
         carregarInfoVendedor();
-        btnInfoVendedor.classList.replace('btn-outline-primary', 'btn-primary');
-        btnOfertas.classList.replace('btn-primary', 'btn-outline-primary');
-        btnPublicacoes.classList.replace('btn-primary', 'btn-outline-primary');
     });
 
     btnOfertas.addEventListener('click', () => {
+        setActiveButton('btn-ofertas');
         carregarOfertasVendedor();
-        btnOfertas.classList.replace('btn-outline-primary', 'btn-primary');
-        btnInfoVendedor.classList.replace('btn-primary', 'btn-outline-primary');
-        btnPublicacoes.classList.replace('btn-primary', 'btn-outline-primary');
     });
 
     btnPublicacoes.addEventListener('click', () => {
+        setActiveButton('btn-publicacoes');
         carregarPublicacoesVendedor();
-        btnPublicacoes.classList.replace('btn-outline-primary', 'btn-primary');
-        btnInfoVendedor.classList.replace('btn-primary', 'btn-outline-primary');
-        btnOfertas.classList.replace('btn-primary', 'btn-outline-primary');
     });
+
+    // Carrega a tela de informações do vendedor por padrão
+    carregarInfoVendedor();
+    setActiveButton('btn-info-vendedor');
 });
