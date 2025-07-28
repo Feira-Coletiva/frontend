@@ -1,3 +1,6 @@
+// ID do Cliente Logado (SIMULAÇÃO) - Em um app real, isso viria da autenticação
+const CLIENTE_ID_LOGADO = 1; // Substitua por um ID de cliente válido do seu banco
+
 // Método para navegação entre as telas da home
 // Assumimos que esta função está definida em navegacaoSPA.js ou foi movida para cá.
 function navega(destino) {
@@ -87,6 +90,7 @@ function calcularTotalCompra(publicacao) {
 }
 
 // Carregando a publicação selecionada e seus produtos
+// Carregando a publicação selecionada e seus produtos
 async function carregarPubli(publicacaoId) {
   try {
     navega('publicacao');
@@ -104,13 +108,13 @@ async function carregarPubli(publicacaoId) {
     let produtosHtml = '';
     if (publi.oferta.produtos && publi.oferta.produtos.length > 0) {
         produtosHtml = publi.oferta.produtos.map(produto => {
-            // Inicializa a quantidade para cada produto
+            // Inicializa a quantidade para cada produto como 0
             quantidadesSelecionadas[produto.id] = 0; 
             return `
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="mb-0">${produto.nome} (${produto.unidadeMedida})</h6>
-                        <small>R$ ${produto.preco.toFixed(2)} | Estoque: ${produto.qtdEstoque}</small>
+                        <small>Preço: R$ ${produto.preco.toFixed(2)} | Estoque: ${produto.qtdEstoque}</small>
                     </div>
                     <div class="d-flex align-items-center">
                         <button class="btn btn-sm btn-outline-secondary me-2 btn-diminuir" data-produto-id="${produto.id}">-</button>
@@ -127,7 +131,6 @@ async function carregarPubli(publicacaoId) {
     const publiSele = document.createElement('div');
     publiSele.classList.add('d-flex', 'flex-column', 'justify-content-center');
     publiSele.innerHTML = ` 
-      <!-- Detalhes da Publicação -->
       <div class="my-3">
         <img src="IMAGENS/verduras.jpg" alt="Imagem do produto" style="width: 100%; height: 250px; object-fit: cover;">
       </div>
@@ -141,7 +144,6 @@ async function carregarPubli(publicacaoId) {
         <p><strong>Vendedor:</strong> ${publi.oferta.vendedor.nome}</p>
       </div>
       <hr>
-      <!-- Lista de Produtos -->
       <div class="mb-2">
         <h5>Produtos Disponíveis</h5>
         <ul class="list-group">
@@ -149,14 +151,12 @@ async function carregarPubli(publicacaoId) {
         </ul>
       </div>
       <hr>
-      <!-- Local de Retirada -->
       <div class="mb-2">
         <h5>Local de Retirada</h5>
         <p><strong>Nome do Local:</strong> ${publi.localDeRetirada.nome}</p>
         <p><strong>CEP:</strong> ${publi.localDeRetirada.cep}</p>
       </div>
       <hr>
-      <!-- Datas de Finalização -->
       <div class="mb-2">
         <h5>Prazos</h5>
         <p><strong>Data Final de Exposição:</strong> ${new Date(publi.dtFinalExposicao).toLocaleDateString()}</p>
@@ -193,10 +193,54 @@ async function carregarPubli(publicacaoId) {
     });
 
     // Event listener para o botão "Participar da Compra"
-    document.getElementById('btn-participar-compra').addEventListener('click', () => {
-        // Lógica para enviar o pedido de compra com as quantidades selecionadas
-        console.log('Quantidades selecionadas:', quantidadesSelecionadas);
-        alert('Funcionalidade de participar da compra ainda não implementada.');
+    document.getElementById('btn-participar-compra').addEventListener('click', async () => {
+        const pedidosParaEnviar = [];
+        for (const produtoId in quantidadesSelecionadas) {
+            const quantidade = quantidadesSelecionadas[produtoId];
+            if (quantidade > 0) {
+                pedidosParaEnviar.push({
+                    idProduto: parseInt(produtoId),
+                    qtdProdutos: quantidade
+                });
+            }
+        }
+
+        if (pedidosParaEnviar.length === 0) {
+            alert('Por favor, selecione a quantidade de pelo menos um produto para participar.');
+            return;
+        }
+
+        const participanteData = {
+            idCliente: CLIENTE_ID_LOGADO,
+            idPublicacao: publicacaoId,
+            pedidos: pedidosParaEnviar
+        };
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/participantes', participanteData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 201 || response.status === 200) { // 201 Created é o esperado para POST
+                alert('Participação na compra registrada com sucesso!');
+                // Opcional: Voltar para a home ou limpar a tela de detalhes
+                navega('home'); 
+                carregarDados(); // Recarregar a lista de publicações, se necessário
+            } else {
+                alert('Erro ao registrar participação. Por favor, tente novamente.');
+            }
+        } catch (error) {
+            console.error('Erro ao enviar participação:', error);
+            let mensagemErro = 'Erro ao registrar participação. Verifique o console para mais detalhes.';
+            if (error.response && error.response.data && error.response.data.message) {
+                mensagemErro = `Erro: ${error.response.data.message}`;
+            } else if (error.message) {
+                 mensagemErro = `Erro: ${error.message}`;
+            }
+            alert(mensagemErro);
+        }
     });
 
   } catch (erro) {

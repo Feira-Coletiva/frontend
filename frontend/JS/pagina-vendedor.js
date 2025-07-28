@@ -1,13 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ID do Vendedor Logado (simulação)
-    const VENDEDOR_ID = 2;
+    const VENDEDOR_ID = 1;
 
     // Endpoints da API
     const API_VENDEDOR_URL = `http://localhost:8080/api/vendedores/${VENDEDOR_ID}`;
     const API_OFERTAS_VENDEDOR_URL = `http://localhost:8080/api/vendedores/ofertas/${VENDEDOR_ID}`;
     const API_OFERTA_POR_ID_URL = 'http://localhost:8080/api/ofertas'; // Endpoint para buscar oferta por ID
     const API_PUBLICACOES_VENDEDOR_URL = `http://localhost:8080/api/publicacoes/vendedor/${VENDEDOR_ID}`;
+    // Endpoint principal para buscar publicações (agora usaremos o de detalhes)
     const API_PUBLICACAO_POR_ID_URL = 'http://localhost:8080/api/publicacoes';
+    // Novo endpoint para buscar detalhes de uma PARTICIPAÇÃO (para o vendedor)
+    const API_PARTICIPANTE_POR_ID_URL = 'http://localhost:8080/api/participantes';
+
 
     // Elementos da página
     const conteudoSpa = document.getElementById('conteudo-spa');
@@ -157,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <p class="card-text mb-2"><strong>Etapa:</strong> ${publicacao.etapa}</p>
                                         <p class="card-text mb-2"><strong>Local de Retirada:</strong> ${publicacao.localDeRetirada.nome}</p>
                                         <p class="card-text mb-2"><strong>Expira em:</strong> ${publicacao.dtFinalExposicao}</p>
-                                        <button type="button" class="btn btn-primary w-100 visualizar-publicacao" data-id="${publicacao.id}">Detalhes</button>
+                                        <button type="button" class="btn btn-primary w-100 visualizar-publicacao" data-id="${publicacao.id}">Detalhes e Pedidos</button>
                                     </div>
                                 </div>
                             </div>
@@ -249,14 +253,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Exibe os detalhes de uma publicação específica
+    // Exibe os detalhes de uma publicação específica, incluindo seus participantes e os pedidos deles
     async function visualizarDetalhesPublicacao(publicacaoId) {
         try {
-            const response = await fetch(`${API_PUBLICACAO_POR_ID_URL}/${publicacaoId}`);
+            // Usa o novo endpoint que retorna PublicacaoDetalhesOutputDTO
+            const response = await fetch(`${API_PUBLICACAO_POR_ID_URL}/${publicacaoId}/detalhes`);
             if (!response.ok) {
-                throw new Error('Não foi possível carregar os detalhes da publicação.');
+                throw new Error('Não foi possível carregar os detalhes da publicação e participantes.');
             }
             const publicacao = await response.json();
+
+            // Gerar o HTML para a lista de participantes
+            let participantesHtml = '';
+            if (publicacao.participantes && publicacao.participantes.length > 0) {
+                participantesHtml = publicacao.participantes.map(participante => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">${participante.cliente.nome}</h6>
+                            <small>Valor Total: R$ ${participante.valorTotal.toFixed(2)} | Qtd. Produtos: ${participante.qtdTotalProdutos}</small>
+                        </div>
+                        <button class="btn btn-sm btn-info detalhes-participante-vendedor" data-id="${participante.id}">Detalhes Pedidos</button>
+                    </li>
+                `).join('');
+            } else {
+                participantesHtml = '<li class="list-group-item text-muted">Nenhum participante nesta publicação ainda.</li>';
+            }
+
 
             const detalhesHtml = `
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -269,11 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     <hr>
                     <p><strong>Etapa Atual:</strong> ${publicacao.etapa}</p>
                     <p><strong>Local de Retirada:</strong> ${publicacao.localDeRetirada.nome} (${publicacao.localDeRetirada.cep})</p>
-                    <p><strong>Data Final de Exposição:</strong> ${publicacao.dtFinalExposicao}</p>
-                    <p><strong>Data Final de Pagamento:</strong> ${publicacao.dtFinalPagamento}</p>
+                    <p><strong>Data Final de Exposição:</strong> ${new Date(publicacao.dtFinalExposicao).toLocaleDateString()}</p>
+                    <p><strong>Data Final de Pagamento:</strong> ${new Date(publicacao.dtFinalPagamento).toLocaleDateString()}</p>
+                    <hr>
+                    <h5>Participantes (${publicacao.participantes ? publicacao.participantes.length : 0})</h5>
+                    <ul class="list-group mb-3">
+                        ${participantesHtml}
+                    </ul>
                 </div>
                 <div class="d-grid gap-2 mt-4">
-                    <button class="btn btn-primary">Gerenciar Pedidos</button>
+                    <button class="btn btn-primary">Gerenciar Publicação</button>
                     <button class="btn btn-warning">Editar Publicação</button>
                 </div>
             `;
@@ -284,9 +311,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 carregarPublicacoesVendedor();
             });
 
+            // Adiciona event listeners para os botões de detalhes dos participantes
+            document.querySelectorAll('.detalhes-participante-vendedor').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const participanteId = event.target.dataset.id;
+                    visualizarDetalhesParticipanteVendedor(participanteId);
+                });
+            });
+
         } catch (error) {
             console.error('Erro ao carregar detalhes da publicação:', error);
             conteudoSpa.innerHTML = `<p class="text-danger text-center">Erro ao carregar detalhes da publicação.</p>`;
+        }
+    }
+
+    // Função para exibir os detalhes de um participante específico e seus pedidos (para o vendedor)
+    async function visualizarDetalhesParticipanteVendedor(participanteId) {
+        try {
+            const response = await fetch(`${API_PARTICIPANTE_POR_ID_URL}/${participanteId}`);
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar os detalhes do participante.');
+            }
+            const participante = await response.json();
+
+            // Formata a data e hora da participação
+            const dataParticipacaoFormatada = new Date(participante.dataParticipacao).toLocaleDateString() + ' ' +
+                                              new Date(participante.dataParticipacao).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Gerar o HTML para a lista de pedidos do participante
+            let pedidosDoParticipanteHtml = '';
+            if (participante.pedidos && participante.pedidos.length > 0) {
+                pedidosDoParticipanteHtml = participante.pedidos.map(pedido => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">${pedido.produto.nome} (${pedido.produto.unidadeMedida})</h6>
+                            <small>Qtd: ${pedido.qtdProdutos} | Preço Unitário: R$ ${pedido.precoUnitarioNoPedido.toFixed(2)}</small>
+                        </div>
+                        <strong>R$ ${pedido.valorTotalItem.toFixed(2)}</strong>
+                    </li>
+                `).join('');
+            } else {
+                pedidosDoParticipanteHtml = '<li class="list-group-item text-muted">Nenhum pedido encontrado para este participante.</li>';
+            }
+
+            const detalhesParticipanteHtml = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0">Detalhes do Participante</h3>
+                    <button class="btn btn-secondary" id="btn-voltar-detalhes-publicacao">Voltar</button>
+                </div>
+                <div class="card p-4">
+                    <h5>Cliente: ${participante.cliente.nome}</h5>
+                    <p class="mb-1"><strong>E-mail:</strong> ${participante.cliente.email}</p>
+                    <p class="mb-1"><strong>Telefone:</strong> ${participante.cliente.telefone}</p>
+                    <hr>
+                    <p class="mb-1"><strong>Data da Participação:</strong> ${dataParticipacaoFormatada}</p>
+                    <p class="mb-1"><strong>Valor Total da Participação:</strong> R$ ${participante.valorTotal.toFixed(2)}</p>
+                    <p class="mb-3"><strong>Status Pagamento:</strong> <span class="${participante.statusPago ? 'text-success' : 'text-warning'}">${participante.statusPago ? 'Pago' : 'Pendente'}</span></p>
+                    <hr>
+                    <h5>Pedidos Realizados (${participante.pedidos ? participante.pedidos.length : 0})</h5>
+                    <ul class="list-group mb-3">
+                        ${pedidosDoParticipanteHtml}
+                    </ul>
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-success" id="btn-marcar-pago" ${participante.statusPago ? 'disabled' : ''}>
+                        ${participante.statusPago ? 'Pagamento Confirmado' : 'Marcar como Pago'}
+                    </button>
+                </div>
+            `;
+            
+            conteudoSpa.innerHTML = detalhesParticipanteHtml;
+
+            // Ao clicar em voltar, recarrega os detalhes da publicação original
+            document.getElementById('btn-voltar-detalhes-publicacao')?.addEventListener('click', () => {
+                visualizarDetalhesPublicacao(participante.publicacao.id); // Reusa o ID da publicação da participação
+            });
+
+            // Lógica para marcar como pago (futuramente)
+            document.getElementById('btn-marcar-pago')?.addEventListener('click', () => {
+                alert('Funcionalidade de marcar pagamento ainda não implementada.');
+                // Aqui você enviaria uma requisição PUT para o backend para atualizar o statusPago
+            });
+
+        } catch (error) {
+            console.error('Erro ao carregar detalhes do participante:', error);
+            conteudoSpa.innerHTML = `<p class="text-danger text-center">Erro ao carregar detalhes do participante.</p>`;
         }
     }
 
