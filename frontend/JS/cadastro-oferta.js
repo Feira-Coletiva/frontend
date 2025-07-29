@@ -82,6 +82,11 @@ function adicionarProdutoForm() {
                     <label class="form-label" for="categoriaProduto">Categoria:</label>
                     <select class="form-select" id="categoriaProduto" required>
                         <option value="">Selecione uma categoria</option>
+                        <option value="verdura">verdura</option>
+                        <option value="legumes">legumes</option>
+                        <option value="proteina">proteína</option>
+                        <option value="frutas">frutas</option>
+                        <option value="graos">grãos</option>
                     </select>
                 </div>
                 
@@ -124,7 +129,7 @@ function adicionarProdutoForm() {
                     <input class="form-control" type="number" id="qtdEstoqueProduto" placeholder="Ex: 100" required>
                 </div>
 
-                <button type="submit" class="btn btn-success w-100 mb-2" id="adicionarProdutoToListaBtn">Adicionar Produto à Lista</button>
+                <button type="submit" class="btn btn-success w-100 mb-2 botao-add-produto-lista" id="adicionarProdutoToListaBtn">Adicionar Produto à Lista</button>
             </form>
         `;
         container.innerHTML = formProdutoHtml;

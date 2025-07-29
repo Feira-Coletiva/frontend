@@ -51,9 +51,25 @@ legend{
 /* botao add produto */
 
 #btnAddProduto {
+    background-color: #2e7d32;
     width: 50px;
 }
 
 .button a{
     color: black;
+}
+
+#salvarOfertaBtn{
+    border: none;
+    background-color: #2e7d32;
+}
+
+.publicarOfertaBtn{
+    border: 1px solid #2e7d32;
+    color: #2e7d32;
+}
+
+.botao-add-produto-lista{
+    border: none;
+    background-color: #2e7d32;
 }
