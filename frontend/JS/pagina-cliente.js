@@ -57,7 +57,7 @@ function carregarInfoCliente(cliente) {
                 <input type="tel" class="form-control" id="telefone" value="${cliente.telefone}" required>
             </div>
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" id="btn-editar-info">Editar</button>
+                <button type="button" class="btn btn-primary btn-editar" id="btn-editar-info">Editar</button>
             </div>
         </form>
     `;
@@ -100,7 +100,7 @@ async function carregarPedidosCliente() {
                                 <p class="card-text mb-1"><strong>Valor Total:</strong> R$ ${participacao.valorTotal.toFixed(2)}</p>
                                 <p class="card-text mb-1"><strong>Quantidade Total de Produtos:</strong> ${participacao.qtdTotalProdutos}</p>
                                 <p class="card-text mb-2"><strong>Status Pagamento:</strong> <span class="${statusPagoCor}">${statusPagoTexto}</span></p>
-                                <button type="button" class="btn btn-info btn-sm detalhes-participacao" data-id="${participacao.id}">Ver Detalhes</button>
+                                <button type="button" class="btn btn-info btn-sm detalhes-participacao btn-detalhes" data-id="${participacao.id}">Ver Detalhes</button>
                             </div>
                         </div>
                     </div>
@@ -171,7 +171,7 @@ async function visualizarDetalhesParticipacao(participacaoId) {
                 </ul>
             </div>
             <div class="d-grid gap-2 mt-4">
-                <button class="btn btn-success" id="btn-pagar-participacao" ${participacao.statusPago ? 'disabled' : ''}>
+                <button class="btn btn-success btn-marcar-pago" id="btn-pagar-participacao" ${participacao.statusPago ? 'disabled' : ''}>
                     ${participacao.statusPago ? 'Pagamento Realizado' : 'Marcar como Pago'}
                 </button>
                 <button class="btn btn-danger">Cancelar Participação</button>

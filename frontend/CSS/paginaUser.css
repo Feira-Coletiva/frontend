@@ -60,7 +60,7 @@ ul{
   width: 100%;
 }
 
-button{
+.gerencia-usuario button{
   padding: 10px;
   width: 120px;
   border: none;
@@ -72,8 +72,12 @@ button{
   cursor: pointer;
 }
 
-button:hover{
-    background-color: #26a33d;
+.gerencia-usuario button:focus{
+  background-color: #26a33d;
+}
+
+.gerencia-usuario button:active{
+  background-color: #26a33d;
 }
 
 .divisoria {
@@ -125,6 +129,25 @@ button:hover{
 }
 
 /*  Estilização dos cards com ofertas da pagina do vendedor */
+
+.btn-editar, .btn-nova-oferta, .btn-nova-publi, .visualizar-oferta, .visualizar-publicacao, .btn-marcar-pago{
+  border: none;
+  background-color: #2e7d32;
+  color: #fff;
+}
+
+.detalhes-pedidos, .btn-detalhes{
+  border: 1.5px solid #2e7d32;
+  background-color: #30b148;
+  color: #fdfdfd;
+}
+
+.btn-gerenciar-publi{
+  border: 1px solid #2e7d32;
+  background-color: #fff;
+  color: #2e7d32;
+  font-weight: bold;
+}
 
 #botaoEditar {
   margin: 0.8rem 30vw;

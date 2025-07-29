@@ -54,7 +54,7 @@ async function carregarDados() {
           </div>
           <!-- Meio: Imagem e Título -->
           <div class="">
-            <img src="IMAGENS/verduras.jpg" alt="Imagem do produto" style="width: 100%; height: 150px; object-fit: cover;" />
+            <img src="IMAGENS/cesta-frutas.jpg" alt="Imagem do produto" style="width: 100%; height: 150px; object-fit: cover;" />
           </div>
           <!-- Inferior: Descrição e Botão -->
           <div class="d-flex flex-column mt-1">
@@ -63,7 +63,7 @@ async function carregarDados() {
               <p>${publi.oferta.descricao}</p>
             </div>
             <div class="d-flex flex-row justify-content-center px-2 py-2">
-              <button class="btn btn-primary w-100" onclick="carregarPubli(${publi.id})">
+              <button class="btn btn-primary w-100 botao-visualizar" onclick="carregarPubli(${publi.id})">
                 Visualizar
               </button>
             </div>
@@ -132,13 +132,13 @@ async function carregarPubli(publicacaoId) {
     publiSele.classList.add('d-flex', 'flex-column', 'justify-content-center');
     publiSele.innerHTML = ` 
       <div class="my-3">
-        <img src="IMAGENS/verduras.jpg" alt="Imagem do produto" style="width: 100%; height: 250px; object-fit: cover;">
+        <img src="IMAGENS/cesta-frutas.jpg" alt="Imagem do produto" style="width: 100%; height: 250px; object-fit: cover;">
       </div>
       <hr>
       <div class="mb-2">
         <div class="d-flex justify-content-between align-items-center">
           <h2 class="mb-0">${publi.oferta.titulo}</h2>
-          <button class="btn btn-primary" onclick="navega('home')">Voltar</button>
+          <button class="btn btn-primary botao-voltar" onclick="navega('home')">Voltar</button>
         </div>
         <p class="mt-2">${publi.oferta.descricao}</p>
         <p><strong>Vendedor:</strong> ${publi.oferta.vendedor.nome}</p>
@@ -163,7 +163,7 @@ async function carregarPubli(publicacaoId) {
         <p><strong>Data Final de Pagamento:</strong> ${new Date(publi.dtFinalPagamento).toLocaleDateString()}</p>
       </div>
       <div class="d-grid gap-2 mt-4">
-        <button class="btn btn-success" id="btn-participar-compra">Participar da Compra (Total: R$ <span id="total-compra">0.00</span>)</button>
+        <button class="btn btn-success botao-participar-compra" id="btn-participar-compra">Participar da Compra (Total: R$ <span id="total-compra">0.00</span>)</button>
       </div>
     `;
     publiSelecionada.appendChild(publiSele);

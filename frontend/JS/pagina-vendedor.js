@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="text" class="form-control" id="chavePix" value="${vendedor.chavePix}" required>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary" id="btn-editar-info-vendedor">Editar</button>
+                        <button type="button" class="btn btn-primary btn-editar" id="btn-editar-info-vendedor">Editar</button>
                     </div>
                 </form>
             `;
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let ofertasHtml = `
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="mb-0">Minhas Ofertas</h3>
-                <button class="btn btn-success" id="btn-nova-oferta">Nova Oferta</button>
+                <button class="btn btn-success btn-nova-oferta" id="btn-nova-oferta">Nova Oferta</button>
             </div>
             <div id="ofertas-container" class="row row-cols-1 row-cols-md-2 g-4">
         `;
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ofertasHtml += `
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card">
-                                <img src="../IMAGENS/verduras.jpg" class="card-img-top" alt="Imagem da oferta" style="height: 150px; object-fit: cover;">
+                                <img src="../IMAGENS/cesta-frutas.jpg" class="card-img-top" alt="Imagem da oferta" style="height: 150px; object-fit: cover;">
                                 <div class="card-body">
                                     <h5 class="card-title">${oferta.titulo}</h5>
                                     <p class="card-text mb-2"><strong class="${statusCor}">${statusTexto}</strong></p>
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let publicacoesHtml = `
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="mb-0">Minhas Publicações</h3>
-                <button class="btn btn-success" id="btn-nova-publicacao">Nova Publicação</button>
+                <button class="btn btn-success btn-nova-publi" id="btn-nova-publicacao">Nova Publicação</button>
             </div>
             <div id="publicacoes-container" class="row row-cols-1 row-cols-md-2 g-4">
         `;
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="btn btn-secondary" id="btn-voltar-ofertas">Voltar</button>
                 </div>
                 <div class="card p-4">
-                    <img src="../IMAGENS/verduras.jpg" class="card-img-top mb-3" alt="Imagem da oferta" style="height: 200px; object-fit: cover;">
+                    <img src="../IMAGENS/cesta-frutas.jpg" class="card-img-top mb-3" alt="Imagem da oferta" style="height: 200px; object-fit: cover;">
                     <h5>${oferta.titulo}</h5>
                     <p><strong>Descrição:</strong> ${oferta.descricao}</p>
                     <hr>
@@ -236,8 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </ul>
                 </div>
                 <div class="d-grid gap-2 mt-4">
-                    <button class="btn btn-primary">Gerenciar Publicações</button>
-                    <button class="btn btn-warning">Editar Oferta</button>
+                    <button class="btn btn-warning btn-editar">Editar Oferta</button>
                 </div>
             `;
             
@@ -272,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h6 class="mb-0">${participante.cliente.nome}</h6>
                             <small>Valor Total: R$ ${participante.valorTotal.toFixed(2)} | Qtd. Produtos: ${participante.qtdTotalProdutos}</small>
                         </div>
-                        <button class="btn btn-sm btn-info detalhes-participante-vendedor" data-id="${participante.id}">Detalhes Pedidos</button>
+                        <button class="btn btn-sm btn-info detalhes-participante-vendedor detalhes-pedidos" data-id="${participante.id}">Detalhes Pedidos</button>
                     </li>
                 `).join('');
             } else {
@@ -300,8 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </ul>
                 </div>
                 <div class="d-grid gap-2 mt-4">
-                    <button class="btn btn-primary">Gerenciar Publicação</button>
-                    <button class="btn btn-warning">Editar Publicação</button>
+                    <button class="btn btn-primary btn-gerenciar-publi">Gerenciar Publicação</button>
+                    <button class="btn btn-warning btn-editar">Editar Publicação</button>
                 </div>
             `;
             
@@ -374,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </ul>
                 </div>
                 <div class="d-grid gap-2 mt-4">
-                    <button class="btn btn-success" id="btn-marcar-pago" ${participante.statusPago ? 'disabled' : ''}>
+                    <button class="btn btn-success btn-marcar-pago" id="btn-marcar-pago" ${participante.statusPago ? 'disabled' : ''}>
                         ${participante.statusPago ? 'Pagamento Confirmado' : 'Marcar como Pago'}
                     </button>
                 </div>
